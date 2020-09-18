@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "367755060237",
+    "firebase_url": "https://mechat-b5d9f.firebaseio.com",
+    "project_id": "mechat-b5d9f",
+    "storage_bucket": "mechat-b5d9f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367755060237:android:9488941fb93458eb23e144",
+        "android_client_info": {
+          "package_name": "com.mechat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "367755060237-7k60vskbedtbhea4797p61qu3jq89o0g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mechat",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "367755060237-u3sm590mr3vsl5oddlb6tskkjd9jbfnh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAoa6Cdvfnn9i7q6O14-MmZhfFHYTdn7o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "367755060237-u3sm590mr3vsl5oddlb6tskkjd9jbfnh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
