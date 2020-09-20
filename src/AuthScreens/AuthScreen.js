@@ -16,15 +16,16 @@ import auth from '@react-native-firebase/auth';
 import Img from "../../assets/Image1.png";
 import Img1 from "../../assets/Verification.png";
 
-const AuthScreen = ({ navigation }) => {
+const AuthScreen = ({ navigation, handleFirst }) => {
     const [phoneNumber, setPhoneNumber] = useState(null);
     const [verified, setVerified] = useState(false);
     const [confirm, setConfirm] = useState(null);
     const [code, setCode] = useState('');
+
     async function signInWithPhoneNumber(phoneNumber) {
         const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
         setConfirm(confirmation);
-
+        handleFirst();
     }
 
     async function confirmCode() {
@@ -44,8 +45,8 @@ const AuthScreen = ({ navigation }) => {
                 if (user) {
                     // Obviously, you can add more statements here, 
                     //       e.g. call an action creator if you use Redux. 
-                    navigation.navigate('ProfileSetting');
-                    // navigate the user away from the login screens: 
+                    console.log('I am working');
+                    // navigte the user away from the login screens: 
 
                 }
                 else {

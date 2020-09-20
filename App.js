@@ -17,7 +17,7 @@ import {
 
 
 import AppNavigator from './src/Navigation/AppNavigator';
-
+import ProfileSetting from './src/AuthScreens/ProfileSetting';
 
 const App = () => {
 

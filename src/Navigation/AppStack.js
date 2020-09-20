@@ -1,18 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 // Screens
 import HomeScreen from '../Components/HomeScreen';
-
+import ProfileSetting from "../AuthScreens/ProfileSetting";
 
 // Authentication Stack
-const Auth = createStackNavigator();
+const App = createStackNavigator();
 
 const AppStack = () => (
-    <Auth.Navigator initialRouteName="HomeScreen" headerMode="none">
-        <Auth.Screen name="HomeScreen" component={HomeScreen} />
 
-    </Auth.Navigator>
+    <App.Navigator initialRouteName="HomeScreen" headerMode="none">
+        <App.Screen name="HomeScreen" component={HomeScreen} />
+        <App.Screen name="ProfileSetting" component={ProfileSetting} />
+    </App.Navigator>
 );
 
 export default AppStack;
