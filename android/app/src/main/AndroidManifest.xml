@@ -2,12 +2,14 @@
   package="com.mechat">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+   <uses-permission android:name="android.permission.WRITE_CONTACTS" />   
+   <uses-permission android:name="android.permission.READ_CONTACTS" />  
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:allowBackup="false"
+      android:requestLegacyExternalStorage="true"
       android:theme="@style/AppTheme">
       <activity
         android:name=".MainActivity"

@@ -7,7 +7,6 @@ import {
     Text,
     Image,
     ImageBackground,
-
     TouchableOpacity,
 } from 'react-native';
 import IntlPhoneInput from 'react-native-intl-phone-input';

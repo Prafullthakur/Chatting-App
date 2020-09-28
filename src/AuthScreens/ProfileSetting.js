@@ -13,17 +13,21 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import DocumentPicker from 'react-native-document-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import ImagePicker from 'react-native-image-picker';
 import { UserConsumer } from '../Context/UserContext';
+import Home from '../Components/HomeScreen';
 import deflt from '../../assets/default.png';
 import bg from '../../assets/bg2.jpg';
 export default function ProfileSetting() {
     const [state, setState] = useState({
         name: "",
         profilePicture: deflt,
-        userId: ""
+        userId: "",
+        phoneNumber: ""
     });
     const [picture, setPicture] = useState(deflt);
-
+    const [done, setDone] = useState(false);
+    const user = useContext(UserConsumer);
     const uploadProfile = async () => {
 
         const data = state;
@@ -34,34 +38,59 @@ export default function ProfileSetting() {
             .set(data)
             .then((snap) => {
                 alert("User Added Successfully!");
-
+                setDone(true);
             })
-            .catch((err) => alert("An error occured!"));
+            .catch((error) => { alert("An error occured!"), console.log(error) });
     };
 
-
+    const options = { quality: 1, maxWidth: 500, maxHeight: 500, allowsEditing: false, storageOptions: { skipBackup: true } }
     const PickPicture = async () => {
-        try {
-            const res = await DocumentPicker.pick({
-                type: [DocumentPicker.types.images],
-            });
-            const source = { uri: res.uri }
-            setState({ ...state, profilePicture: source });
-            setPicture(res);
-        } catch (err) {
-            if (DocumentPicker.isCancel(err)) {
-                // User cancelled the picker, exit any dialogs or menus and move on
+
+        ImagePicker.showImagePicker(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
             } else {
-                throw err;
+                // You can also display the image using data:
+                const image = { uri: 'data:image/jpeg;base64,' + response.data };
+                setPicture(image);
+                setState({
+                    ...state,
+                    profilePicture: image,
+                });
             }
-        }
+        });
+
+        // try {
+        //     const res = await DocumentPicker.pick({
+        //         type: [DocumentPicker.types.images],
+        //     });
+        //     const source = res;
+        //     setState({ ...state, profilePicture: source });
+        //     setPicture(res);
+        // } catch (err) {
+        //     if (DocumentPicker.isCancel(err)) {
+        //         // User cancelled the picker, exit any dialogs or menus and move on
+        //     } else {
+        //         throw err;
+        //     }
+        // }
     }
+
+    useEffect(() => {
+        setState({ ...state, userId: user.uid, phoneNumber: user.phoneNumber });
+
+    }, [])
+
 
 
     return (
         <>
             <StatusBar barStyle="dark-content" />
-            <UserConsumer>
+            { !done ? <UserConsumer>
                 {(value) => {
 
                     return <ImageBackground source={bg} style={{ flex: 1 }}>
@@ -73,7 +102,7 @@ export default function ProfileSetting() {
                                     <Image style={styles.profilePicture} source={picture} />
                                     <Icon name="camera" style={{ position: "absolute", bottom: 6, right: 4 }} size={20} color="white" onPress={() => {
                                         PickPicture();
-                                        setState({ ...state, userId: value });
+
                                     }} />
                                 </View>
                                 <View style={styles.namePicker}>
@@ -91,8 +120,8 @@ export default function ProfileSetting() {
                     </ImageBackground>
                 }}
             </UserConsumer>
-
-
+                : <Home />
+            }
 
         </>
     )

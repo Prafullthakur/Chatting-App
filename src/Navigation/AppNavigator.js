@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
+import { UserProvider } from '../Context/UserContext';
 // Stack
 import AuthStack from './AuthStack';
 //AppStack
@@ -13,12 +13,14 @@ const MainStack = createStackNavigator();
 
 const AppNavigator = () => (
     <NavigationContainer>
+        <UserProvider>
+            <MainStack.Navigator initialRouteName="Loading" headerMode="none">
+                <MainStack.Screen name="Loading" component={Loading} />
+                <MainStack.Screen name="Auth" component={AuthStack} />
+                <MainStack.Screen name="App" component={AppStack} />
+            </MainStack.Navigator>
+        </UserProvider>
 
-        <MainStack.Navigator initialRouteName="Loading" headerMode="none">
-            <MainStack.Screen name="Loading" component={Loading} />
-            <MainStack.Screen name="Auth" component={AuthStack} />
-            <MainStack.Screen name="App" component={AppStack} />
-        </MainStack.Navigator>
 
     </NavigationContainer>
 );

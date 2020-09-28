@@ -23,7 +23,7 @@ const Loading = ({ navigation }) => {
     useEffect(() => {
         return auth().onAuthStateChanged((user) => {
             if (user) {
-                setUser(user.uid);
+                setUser(user);
                 //auth().signOut();
                 //  user ? navigation.navigate('App') : navigation.navigate('Auth');
             }
