@@ -7,7 +7,7 @@ import ProfileSetting from "../AuthScreens/ProfileSetting";
 import StatusScreen from '../Components/StatusScreen';
 import CallScreen from '../Components/CallScreen';
 import ContactScreen from '../Components/ContactScreen';
-
+import DMScreen from '../Components/DMScreen';
 // Authentication Stack
 const App = createStackNavigator();
 
@@ -19,7 +19,7 @@ const AppStack = () => (
         <App.Screen name="Status" component={StatusScreen} />
         <App.Screen name="CallScreen" component={CallScreen} />
         <App.Screen name="Contact" component={ContactScreen} />
-
+        <App.Screen name='DMScreen' component={DMScreen} />
     </App.Navigator>
 );
 

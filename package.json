@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-native-community/async-storage": "^1.12.0",
     "@react-native-community/masked-view": "^0.1.10",
+    "@react-native-community/netinfo": "^5.9.7",
     "@react-native-firebase/app": "^8.4.2",
     "@react-native-firebase/auth": "^9.2.2",
     "@react-native-firebase/firestore": "^7.8.2",
@@ -24,6 +25,7 @@
     "react-native-document-picker": "^3.5.4",
     "react-native-fs": "^2.16.6",
     "react-native-gesture-handler": "^1.8.0",
+    "react-native-gifted-chat": "^0.16.3",
     "react-native-image-picker": "^2.3.4",
     "react-native-intl-phone-input": "^1.2.26",
     "react-native-reanimated": "^1.13.0",
