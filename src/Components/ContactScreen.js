@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 
 import {
     StatusBar,
     SafeAreaView,
     StyleSheet,
+    TouchableOpacity,
     View,
     Text,
     TextInput,
@@ -17,10 +18,11 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import BottomBar from './BottomBar';
 import Contacts from 'react-native-contacts';
 import { get } from 'react-native/Libraries/Utilities/PixelRatio';
+import { UserConsumer } from '../Context/UserContext';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const ContactScreen = ({ navigation }) => {
-
+    const usr = useContext(UserConsumer);
     const [active, setActive] = useState('contact');
     const [contacts, setContacts] = useState([]);
     const [users, setUsers] = useState({
@@ -151,7 +153,6 @@ const ContactScreen = ({ navigation }) => {
             let counter = await AsyncStorage.getItem(
                 'count',
             );
-
             setUsers(JSON.parse(user));
             setCount(JSON.parse(counter));
         } catch (error) {
@@ -160,16 +161,19 @@ const ContactScreen = ({ navigation }) => {
     }
 
     const Item = ({ name, profilePicture, phoneNumber }) => (
-        <View style={styles.item}>
-            <View style={{ flexDirection: "row" }}>
-                <Image source={profilePicture} style={styles.messagePicture} />
-                <View style={styles.intro}>
-                    <Text style={styles.title}>{name}</Text>
-                    <Text style={styles.newMessage}>{phoneNumber}</Text>
+        <TouchableOpacity onPress={() => { navigation.navigate('DMScreen') }}>
+            <View style={styles.item}>
+                <View style={{ flexDirection: "row" }}>
+                    <Image source={profilePicture} style={styles.messagePicture} />
+                    <View style={styles.intro}>
+                        <Text style={styles.title}>{name}</Text>
+                        <Text style={styles.newMessage}>{phoneNumber}</Text>
+                    </View>
                 </View>
-            </View>
 
-        </View>
+            </View>
+        </TouchableOpacity>
+
     );
 
     const renderItem = ({ item }) => (
@@ -179,6 +183,7 @@ const ContactScreen = ({ navigation }) => {
     useEffect(() => {
         getList();
         getLocal();
+
     }, [])
 
     return (

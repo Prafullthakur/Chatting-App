@@ -8,11 +8,10 @@ import StatusScreen from '../Components/StatusScreen';
 import CallScreen from '../Components/CallScreen';
 import ContactScreen from '../Components/ContactScreen';
 import DMScreen from '../Components/DMScreen';
-// Authentication Stack
+// Application Stack
 const App = createStackNavigator();
 
 const AppStack = () => (
-
     <App.Navigator initialRouteName="HomeScreen" headerMode="none">
         <App.Screen name="HomeScreen" component={HomeScreen} />
         <App.Screen name="ProfileSetting" component={ProfileSetting} />

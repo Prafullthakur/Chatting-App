@@ -30,7 +30,6 @@ const AuthScreen = ({ navigation, handleFirst }) => {
     async function confirmCode() {
         try {
             await confirm.confirm(code);
-            navigation.navigate('ProfileSetting');
         } catch (error) {
             console.log('Invalid code.', error);
         }

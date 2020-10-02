@@ -13,13 +13,15 @@ import {
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useNavigation } from '@react-navigation/native';
 import { UserConsumer } from '../Context/UserContext';
 import BottomBar from './BottomBar';
 import StatusScreen from './StatusScreen';
 import CallScreen from './CallScreen';
 import ContactScreen from './ContactScreen';
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = () => {
 
+    const navigation = useNavigation();
     const [user, setUser] = useState(null);
 
     const usr = useContext(UserConsumer);
@@ -157,7 +159,7 @@ const HomeScreen = ({ navigation }) => {
                                         </View>
                                         <View style={styles.seachBar}>
                                             <TextInput placeholder="Search" style={styles.search} onChangeText={(text) => { setSearch(text) }} />
-                                            <Icon name="search" style={{ paddingLeft: 5 }} size={22} color="white" />
+                                            <Icon name="search" style={{ paddingLeft: 5 }} size={22} color="white" onPress={() => { navigation.navigate('Status') }} />
                                         </View>
                                         <FlatList
                                             data={DATA}
