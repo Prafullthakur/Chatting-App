@@ -16,9 +16,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import { UserConsumer } from '../Context/UserContext';
 import BottomBar from './BottomBar';
-import StatusScreen from './StatusScreen';
-import CallScreen from './CallScreen';
-import ContactScreen from './ContactScreen';
+
 const HomeScreen = () => {
 
     const navigation = useNavigation();
@@ -136,47 +134,35 @@ const HomeScreen = () => {
                 flex: 1,
                 backgroundColor: "black",
             }}>
-                <ScrollView
-                    horizontal={true}
-                    contentContainerStyle={{ width: `${400}%` }}
-                    showsHorizontalScrollIndicator={false}
-                    scrollEventThrottle={200}
-                    decelerationRate="fast"
-                    pagingEnabled>
-                    {
-                        user ?
-                            <>
-                                <View style={styles.main}>
-                                    <View style={styles.inner}>
-                                        <View style={styles.profile}>
-                                            <View style={styles.profileContent}>
-                                                <Image source={user.profilePicture} style={styles.profilePicture} />
-                                            </View>
-                                            <Text style={styles.userName}>MeChat</Text>
-                                            <View>
-                                                <Icon name="ellipsis-v" size={20} color="white" />
-                                            </View>
+                {
+                    user ?
+                        <>
+                            <View style={styles.main}>
+                                <View style={styles.inner}>
+                                    <View style={styles.profile}>
+                                        <View style={styles.profileContent}>
+                                            <Image source={user.profilePicture} style={styles.profilePicture} />
                                         </View>
-                                        <View style={styles.seachBar}>
-                                            <TextInput placeholder="Search" style={styles.search} onChangeText={(text) => { setSearch(text) }} />
-                                            <Icon name="search" style={{ paddingLeft: 5 }} size={22} color="white" onPress={() => { navigation.navigate('Status') }} />
+                                        <Text style={styles.userName}>MeChat</Text>
+                                        <View>
+                                            <Icon name="ellipsis-v" size={20} color="white" />
                                         </View>
-                                        <FlatList
-                                            data={DATA}
-                                            renderItem={renderItem}
-                                            keyExtractor={item => item.id} />
                                     </View>
-
-                                    <BottomBar navigation={navigation} active={active} />
+                                    <View style={styles.seachBar}>
+                                        <TextInput placeholder="Search" style={styles.search} onChangeText={(text) => { setSearch(text) }} />
+                                        <Icon name="search" style={{ paddingLeft: 5 }} size={22} color="white" onPress={() => { navigation.navigate('Status') }} />
+                                    </View>
+                                    <FlatList
+                                        data={DATA}
+                                        renderItem={renderItem}
+                                        keyExtractor={item => item.id} />
                                 </View>
 
-                            </> : <View></View>
-                    }
-                    <StatusScreen />
-                    <CallScreen />
-                    <ContactScreen />
-                </ScrollView>
+                                <BottomBar navigation={navigation} active={active} />
+                            </View>
 
+                        </> : <View></View>
+                }
             </SafeAreaView>
         </>
     );

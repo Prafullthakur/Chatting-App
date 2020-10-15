@@ -70,24 +70,6 @@ const ContactScreen = ({ navigation }) => {
 
     }
 
-    const CheckConnectivity = (users, count) => {
-        // For Android devices
-        if (Platform.OS === "android") {
-            NetInfo.fetch().then(state => {
-                if (state.isConnected) {
-                    setLocal(users, count);
-                }
-            });
-        } else {
-            // For iOS devices
-            NetInfo.isConnected.addEventListener(
-                "connectionChange",
-                this.handleFirstConnectivityChange
-            );
-        }
-    };
-
-
     const getUser = async (contact) => {
         let users = [];
         const length = Math.floor(contact.length / 10);
@@ -115,7 +97,9 @@ const ContactScreen = ({ navigation }) => {
                     querySnapshot._docs.map((data) => (
                         count++,
                         users.push({ "name": data._data.name, "phoneNumber": data._data.phoneNumber, "profilePicture": data._data.profilePicture, "uid": data._data.userId }),
-                        CheckConnectivity(users, count)
+                        setUsers(users),
+                        setCount(count),
+                        setLocal(users, count)
                     ))
 
                 })
@@ -145,23 +129,17 @@ const ContactScreen = ({ navigation }) => {
         }
     }
 
-    const getLocal = async () => {
-        try {
-            let user = await AsyncStorage.getItem(
-                'users',
-            );
-            let counter = await AsyncStorage.getItem(
-                'count',
-            );
-            setUsers(JSON.parse(user));
-            setCount(JSON.parse(counter));
-        } catch (error) {
-            // Error saving data
-        }
-    }
 
-    const Item = ({ name, profilePicture, phoneNumber }) => (
-        <TouchableOpacity onPress={() => { navigation.navigate('DMScreen') }}>
+
+    const Item = ({ name, profilePicture, phoneNumber, uid }) => (
+        <TouchableOpacity onPress={() => {
+            navigation.navigate('DMScreen', {
+                name: name,
+                profilePicture: profilePicture,
+                uid: uid,
+                phoneNumber: phoneNumber,
+            })
+        }}>
             <View style={styles.item}>
                 <View style={{ flexDirection: "row" }}>
                     <Image source={profilePicture} style={styles.messagePicture} />
@@ -177,12 +155,12 @@ const ContactScreen = ({ navigation }) => {
     );
 
     const renderItem = ({ item }) => (
-        <Item name={item.name} profilePicture={item.profilePicture} phoneNumber={item.phoneNumber} />
+        <Item name={item.name} profilePicture={item.profilePicture} phoneNumber={item.phoneNumber} uid={item.uid} />
     );
 
     useEffect(() => {
         getList();
-        getLocal();
+
 
     }, [])
 

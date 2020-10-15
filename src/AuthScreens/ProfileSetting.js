@@ -10,8 +10,6 @@ import {
     TouchableOpacity
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import storage from '@react-native-firebase/storage';
-import DocumentPicker from 'react-native-document-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ImagePicker from 'react-native-image-picker';
 import { UserConsumer } from '../Context/UserContext';
@@ -64,20 +62,7 @@ export default function ProfileSetting() {
             }
         });
 
-        // try {
-        //     const res = await DocumentPicker.pick({
-        //         type: [DocumentPicker.types.images],
-        //     });
-        //     const source = res;
-        //     setState({ ...state, profilePicture: source });
-        //     setPicture(res);
-        // } catch (err) {
-        //     if (DocumentPicker.isCancel(err)) {
-        //         // User cancelled the picker, exit any dialogs or menus and move on
-        //     } else {
-        //         throw err;
-        //     }
-        // }
+
     }
 
     useEffect(() => {

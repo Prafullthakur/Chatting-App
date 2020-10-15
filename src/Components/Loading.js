@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
 import {
     SafeAreaView,
     View,
@@ -8,6 +7,7 @@ import {
 
 
 const Loading = () => {
+
 
 
     return (
