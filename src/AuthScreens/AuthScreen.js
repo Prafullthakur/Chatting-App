@@ -15,7 +15,7 @@ import auth from '@react-native-firebase/auth';
 import Img from "../../assets/Image1.png";
 import Img1 from "../../assets/Verification.png";
 
-const AuthScreen = ({ navigation, handleFirst }) => {
+const AuthScreen = ({ navigation }) => {
     const [phoneNumber, setPhoneNumber] = useState(null);
     const [verified, setVerified] = useState(false);
     const [confirm, setConfirm] = useState(null);
@@ -24,7 +24,6 @@ const AuthScreen = ({ navigation, handleFirst }) => {
     async function signInWithPhoneNumber(phoneNumber) {
         const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
         setConfirm(confirmation);
-        handleFirst();
     }
 
     async function confirmCode() {

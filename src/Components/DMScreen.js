@@ -5,7 +5,7 @@ import { Voximplant } from 'react-native-voximplant';
 import FilePickerManager from 'react-native-file-picker';
 import RNFS from 'react-native-fs';
 import storage from '@react-native-firebase/storage';
-import firestore from '@react-native-firebase/firestore';
+import database from '@react-native-firebase/database';
 import { UserConsumer } from '../Context/UserContext';
 import { Time } from 'react-native-gifted-chat';
 import { set } from 'react-native-reanimated';
@@ -69,67 +69,65 @@ export default function DMScreen({ route }) {
 
     const uploadMessages = (message) => {
         let path = sum.toString();
-        firestore().collection(path)
-            .doc()
-            .set(message)
-            .then((snap) => {
-                alert("Message sent !");
-            })
-            .catch((error) => { alert("An error occured!"), console.log(error) });
+        database()
+            .ref(`Chats/${path}/`)
+            .push(message)
+            .then(() => console.log('Data set.'))
+            .catch((err) => {
+                console.log(err);
+            });
+
     }
     const getMessages = (sum) => {
+
         let path = sum.toString();
         let allmessages = [];
         let sortedChat = [];
         let times = [];
         let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        firestore().collection(path)
-            .get()
-            .then((data) => {
-                data._docs.map((data) => (
-                    times.push(new Date(data._data.createdAt._seconds * 1000).toUTCString()),
-                    data._data.createdAt = new Date(data._data.createdAt._seconds * 1000).toUTCString(),
-                    allmessages.push(data._data),
-                    setMessages(allmessages)
-                ));
-                times.sort(function (a, b) {
-                    let newA = a.split(' ');
-                    let newB = b.split(' ');
-                    return newB[1] - newA[1];
-                });
 
-                times.sort(function (a, b) {
-                    let newA = a.split(' ');
-                    let newB = b.split(' ');
-                    let dateA = newA[2];
-                    let dateB = newB[2];
-                    return months.indexOf(dateB) - months.indexOf(dateA);
-                });
+        database().ref(`Chats/${path}/`).on('child_added', function (snapdata) {
 
-                times.sort(function (a, b) {
-                    let newA = a.split(' ');
-                    let newB = b.split(' ');
-                    let dateA = newA[3];
-                    let dateB = newB[3];
-                    return dateB - dateA;
-                });
-
-                times.map((data) => (
-                    allmessages.map((time) => (
-                        data === time.createdAt ? sortedChat.push(time) : ''
-                    )),
-                    setMessages(sortedChat)
-                ));
-
-
-
+            Object.values(snapdata).map((data) => {
+                if (data.value !== undefined)
+                    allmessages.unshift(data.value)
             })
-            .catch((error) => { alert("An error occured!"), console.log(error) });
+
+            setMessages(allmessages)
 
 
+            //     times.sort(function (a, b) {
+            //         let newA = a.split(' ');
+            //         let newB = b.split(' ');
+            //         return newB[1] - newA[1];
+            //     });
+
+            //     times.sort(function (a, b) {
+            //         let newA = a.split(' ');
+            //         let newB = b.split(' ');
+            //         let dateA = newA[2];
+            //         let dateB = newB[2];
+            //         return months.indexOf(dateB) - months.indexOf(dateA);
+            //     });
+
+            //     times.sort(function (a, b) {
+            //         let newA = a.split(' ');
+            //         let newB = b.split(' ');
+            //         let dateA = newA[3];
+            //         let dateB = newB[3];
+            //         return dateB - dateA;
+            //     });
+
+            //     times.map((data) => (
+            //         allmessages.map((time) => (
+            //             data === time.createdAt ? sortedChat.push(time) : ''
+            //         )),
+            //         setMessages(sortedChat)
+            //     ));
 
 
+        })
 
     }
 
@@ -174,6 +172,8 @@ export default function DMScreen({ route }) {
                 <GiftedChat style={{ color: "white" }}
                     messages={messages}
                     onSend={messages => {
+                        messages[0].createdAt = Date.now()
+
                         onSend(messages)
                         uploadMessages(messages[0]);
                     }}

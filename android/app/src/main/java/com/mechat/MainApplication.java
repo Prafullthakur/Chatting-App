@@ -12,7 +12,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.voximplant.reactnative.VoxImplantReactPackage;
 import com.rnfs.RNFSPackage;
-import com.rt2zz.reactnativecontacts.ReactNativeContacts; 
 import com.filepicker.FilePickerPackage;
 
 public class MainApplication extends Application implements ReactApplication {

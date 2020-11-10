@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
     StatusBar,
@@ -10,31 +10,24 @@ import {
     TextInput,
     PermissionsAndroid,
     FlatList,
+    ActivityIndicator,
     Image,
 } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import BottomBar from './BottomBar';
-import Contacts from 'react-native-contacts';
-import { get } from 'react-native/Libraries/Utilities/PixelRatio';
-import { UserConsumer } from '../Context/UserContext';
+import simpleContacts from 'react-native-simple-contacts';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const ContactScreen = ({ navigation }) => {
-    const usr = useContext(UserConsumer);
     const [active, setActive] = useState('contact');
     const [contacts, setContacts] = useState([]);
-    const [users, setUsers] = useState({
-        name: "",
-        phoneNumber: "",
-        profilePicture: "",
-        uid: "",
-    });
+    const [change, setChange] = useState([]);
+    const [users, setUsers] = useState(null);
     const [count, setCount] = useState(null);
     const getList = () => {
         let contact = [];
-
         PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
             {
@@ -42,94 +35,89 @@ const ContactScreen = ({ navigation }) => {
                 message: 'This app would like to view your contacts.'
             }
         ).then(() => {
-            Contacts.getAll((err, list) => {
-                if (err) {
-                    console.log('some error happended ' + err);
-                } else {
+            simpleContacts.getContacts().then((contacts) => {
 
-                    list.map((cont) => (
-                        cont.phoneNumbers.map((co) => {
-                            if (co.number.includes('+', 0)) {
-                                contact.push(co.number);
+                let contactsList = JSON.parse(contacts);
+                contactsList.forEach(list => {
 
-                            } else {
-                                let number = '+91' + co.number;
-                                contact.push(number);
-                            }
-                        })
-                    ))
+                    if (list.number.includes('+', 0)) {
 
+                        contact.push(list.number.replace(/\s/g, ""));
+
+                    } else {
+                        let number = '+91' + list.number;
+                        contact.push(number.replace(/\s/g, ""));
+                    }
                     setContacts({ ...contacts, contact });
-
-                    getUser(contact);
-                }
-            });
-
-
+                });
+                getUser(contact);
+            })
         });
 
     }
 
+
     const getUser = async (contact) => {
+
         let users = [];
         const length = Math.floor(contact.length / 10);
         const lastValue = contact.length % 10;
         let counter = 1;
         let count = 0;
-        for (var i = 1; i <= length; i++) {
-            var numbers = [];
-            if (counter !== length) {
-                for (var y = (counter - 1) * 10; y < ((counter - 1) * 10) + 10; y++) {
-                    numbers.push(contact[y]);
-                }
-            } else if (counter === length) {
-                for (var y = counter * 10; y < (counter * 10) + lastValue; y++) {
-                    numbers.push(contact[y]);
-                }
+        const ref = firestore().collection('Users');
+        let numbers = [];
+        while (contact.length) {
+            numbers.push(contact.splice(0, 10));
+        }
 
-            }
-            counter++;
-
-            const ref = firestore().collection('Users')
-            ref.where('phoneNumber', 'in', numbers)
+        numbers.forEach((numberData) => {
+            ref.where('phoneNumber', 'in', numberData)
                 .get()
-                .then(querySnapshot => {
-                    querySnapshot._docs.map((data) => (
+                .then(data => {
+                    data._docs.map((data) => (
                         count++,
                         users.push({ "name": data._data.name, "phoneNumber": data._data.phoneNumber, "profilePicture": data._data.profilePicture, "uid": data._data.userId }),
-                        setUsers(users),
-                        setCount(count),
-                        setLocal(users, count)
-                    ))
+                        setLocal(users, count, counter, numbers.length)
+                    ));
 
                 })
                 .catch((err) => {
                     console.log(err);
-                })
-
-
-        }
+                });
+            counter++
+        })
 
 
     }
 
-    const setLocal = async (users, count) => {
+    const setLocal = async (users, count, counter, length) => {
         try {
             await AsyncStorage.setItem(
                 'users',
                 JSON.stringify(users)
             );
+
             await AsyncStorage.setItem(
                 'count',
                 JSON.stringify(count)
             );
+
+            counter > length ? getFromLocal() : console.log("Not Working");
+
         } catch (error) {
             // Error saving data
 
         }
     }
 
-
+    const getFromLocal = async () => {
+        const user = await AsyncStorage.getItem('users');
+        const parsedUser = JSON.parse(user);
+        setUsers(parsedUser);
+        parsedUser == null ? getList() : "";
+        const count = await AsyncStorage.getItem('count');
+        setCount(count);
+    }
 
     const Item = ({ name, profilePicture, phoneNumber, uid }) => (
         <TouchableOpacity onPress={() => {
@@ -159,10 +147,9 @@ const ContactScreen = ({ navigation }) => {
     );
 
     useEffect(() => {
-        getList();
-
-
+        getFromLocal();
     }, [])
+
 
     return (
         <>
@@ -175,18 +162,33 @@ const ContactScreen = ({ navigation }) => {
                     <View style={styles.main}>
                         <View style={styles.inner}>
                             <View style={styles.head}>
-                                <Text style={styles.mainHead}>Select Contact</Text>
-                                <Text style={styles.secondHead}>{count} contacts</Text>
+                                <View style={styles.headinner}>
+                                    <Text style={styles.mainHead}>Select Contact</Text>
+                                    <Text style={styles.secondHead}>{count} contacts</Text>
+                                </View>
+                                <Icon name="retweet" style={{ paddingLeft: 5 }} size={22} color="white" onPress={() => {
+                                    getList(),
+                                        setUsers(null)
+                                    setCount(0)
+                                }} />
                             </View>
                             <View style={styles.seachBar}>
                                 <TextInput placeholder="Search" style={styles.search} onChangeText={(text) => { setSearch(text) }} />
                                 <Icon name="search" style={{ paddingLeft: 5 }} size={22} color="white" />
                             </View>
-                            <FlatList
-                                data={users}
-                                renderItem={renderItem}
-                                keyExtractor={item => item.uid} />
-
+                            {users ? <>
+                                <FlatList
+                                    data={users}
+                                    renderItem={renderItem}
+                                    keyExtractor={item => item.uid} />
+                            </> : <View style={styles.loadingBG}>
+                                    <ActivityIndicator
+                                        animating={true}
+                                        color="white"
+                                        size="large"
+                                        style={{ margin: 15 }}
+                                    />
+                                </View>}
                         </View>
                     </View>
                     <BottomBar navigation={navigation} active={active} />
@@ -207,6 +209,19 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingRight: 15,
         paddingLeft: 15,
+    },
+    loadingBG: {
+        flex: 0.8,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    head: {
+        justifyContent: "space-between",
+        flexDirection: "row",
+        alignItems: "center"
+    },
+    headinner: {
+        flexDirection: "column",
     },
     mainHead: {
         fontSize: 20,

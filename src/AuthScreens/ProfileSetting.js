@@ -9,14 +9,14 @@ import {
     StyleSheet,
     TouchableOpacity
 } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
+import database from '@react-native-firebase/database';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ImagePicker from 'react-native-image-picker';
 import { UserConsumer } from '../Context/UserContext';
 import Home from '../Components/HomeScreen';
 import deflt from '../../assets/default.png';
 import bg from '../../assets/bg2.jpg';
-export default function ProfileSetting() {
+export default function ProfileSetting({ navigation }) {
     const [state, setState] = useState({
         name: "",
         profilePicture: deflt,
@@ -27,18 +27,14 @@ export default function ProfileSetting() {
     const [done, setDone] = useState(false);
     const user = useContext(UserConsumer);
     const uploadProfile = async () => {
-
         const data = state;
-
-        firestore()
-            .collection('Users')
-            .doc(data.userId)
+        database()
+            .ref(`Users/${user.uid}`)
             .set(data)
-            .then((snap) => {
-                alert("User Added Successfully!");
-                setDone(true);
-            })
-            .catch((error) => { alert("An error occured!"), console.log(error) });
+            .then(() => console.log('Data set.'))
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
     const options = { quality: 1, maxWidth: 500, maxHeight: 500, allowsEditing: false, storageOptions: { skipBackup: true } }
